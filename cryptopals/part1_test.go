@@ -17,7 +17,18 @@ func TestXorHex(t *testing.T) {
 	expected := "746865206b696420646f6e277420706c6179"
 	actual := xorHex(first, second)
 	if actual != expected {
-		t.Errorf("Actual %v", actual)
+		t.Logf("Actual %v", actual)
 		t.Errorf("Base64Xor failed")
 	}
+}
+
+func TestSingleByteXor(t *testing.T) {
+	input := "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
+	expected := "Cooking MC's like a pound of bacon"
+	actual := findXorChar(input)
+	if actual != expected {
+		t.Logf("Actual %v", actual)
+		t.Errorf("TestSingleByteXor failed")
+	}
+
 }

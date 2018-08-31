@@ -1,7 +1,8 @@
 package cryptopals
 
+// TODO: Собрать свою таблицу с учетом пробелов
 var (
-	EnglishRuneFrequencyTable = map[rune]float32 {
+	EnglishRuneFrequencyTable = map[rune]float64 {
 		'a': 8.167,
 		'b': 1.492,
 		'c': 2.782,
