@@ -69,15 +69,13 @@ func compareToLanguage(str string, baseFrequencyTable map[rune]float64) float64 
 	return closeness
 }
 
-func findXorChar(input string) string {
+func findXorChar(input string, frequencyTable map[rune]float64) string {
 	byteInput, _ := hex.DecodeString(input)
 	bestString := ""
 	minScore := 100500.0
-	// baseFrequencyTable := EnglishRuneFrequencyTable
-	baseFrequencyTable := buildFrequencyTableFromFile("./data/text_1.txt")
 	for b := 0; b < 256; b++ {
 		candidate := string(xorWithByte(byteInput, byte(b)))
-		currentScore := compareToLanguage(candidate, baseFrequencyTable)
+		currentScore := compareToLanguage(candidate, frequencyTable)
 		if currentScore < minScore {
 			minScore = currentScore
 			bestString = candidate
@@ -86,3 +84,20 @@ func findXorChar(input string) string {
 	return bestString
 }
 // End task 3
+
+// Task 4
+func findEncodedString(inputStrings []string) string {
+	topString := ""
+	minScore := 100500.0
+	baseFrequencyTable := buildFrequencyTableFromFile("./data/text_1.txt")
+	for _, str := range inputStrings {
+		encodedString := findXorChar(str, baseFrequencyTable)
+		score := compareToLanguage(encodedString, baseFrequencyTable)
+		if score < minScore {
+			minScore = score
+			topString = encodedString
+		}
+	}
+	return topString
+}
+// End task 4
