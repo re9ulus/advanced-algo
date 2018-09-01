@@ -44,7 +44,7 @@ func xorWithByte(inputBuffer []byte, b byte) []byte {
 	return outputBuffer
 }
 
-func compareToEnglish(str string) float64 {
+func compareToLanguage(str string, baseFrequencyTable map[rune]float64) float64 {
 	str = strings.ToLower(str)
 	divider := float64(len(str))
 	if divider == 0 {
@@ -61,7 +61,7 @@ func compareToEnglish(str string) float64 {
 	var closeness float64 = 0.0
 	eps := 0.0001
 	for key, value := range frequencyTable {
-		closeness += math.Abs(value - EnglishRuneFrequencyTable[key]) / (EnglishRuneFrequencyTable[key] + eps)
+		closeness += math.Abs(value - baseFrequencyTable[key]) / (baseFrequencyTable[key] + eps)
 	}
 	closeness /= float64(len(frequencyTable))
 	return closeness
@@ -71,9 +71,11 @@ func findXorChar(input string) string {
 	byteInput, _ := hex.DecodeString(input)
 	bestString := ""
 	minScore := 100500.0
+	// baseFrequencyTable := EnglishRuneFrequencyTable
+	baseFrequencyTable := buildFrequencyTableFromFile("./data/text_1.txt")
 	for b := 0; b < 256; b++ {
 		candidate := string(xorWithByte(byteInput, byte(b)))
-		currentScore := compareToEnglish(candidate)
+		currentScore := compareToLanguage(candidate, baseFrequencyTable)
 		if currentScore < minScore {
 			minScore = currentScore
 			bestString = candidate
