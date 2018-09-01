@@ -101,3 +101,16 @@ func findEncodedString(inputStrings []string) string {
 	return topString
 }
 // End task 4
+
+// Task 5
+func repeatedXor(input string, key string) string {
+	byteInput, byteKey := []byte(input), []byte(key)
+	buffer := make([]byte, len(byteInput))
+	keyIdx := 0
+	for idx, _ := range byteInput {
+		buffer[idx] = byteInput[idx] ^ byteKey[keyIdx]
+		keyIdx = (keyIdx + 1) % len(byteKey)
+	}
+	return hex.EncodeToString(buffer)
+}
+// End task 5
