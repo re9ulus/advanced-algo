@@ -14,6 +14,7 @@ func hexToBase64(hexStr string) string {
 	}
 	return b64.StdEncoding.EncodeToString(binaryStr)
 }
+// End task 1
 
 // Task 2
 func xorHex(first string, second string) string {
@@ -34,6 +35,7 @@ func xorHex(first string, second string) string {
 	}
 	return hex.EncodeToString(buffer)
 }
+// End task 2
 
 // Task 3
 func xorWithByte(inputBuffer []byte, b byte) []byte {
