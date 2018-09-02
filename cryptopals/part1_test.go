@@ -71,7 +71,7 @@ func TestRepeatedXor(t *testing.T) {
 
 func TestHammingDistance(t *testing.T) {
 	input1, input2 := "this is a test", "wokka wokka!!!"
-	expected, actual := 37, hammingDistance(input1, input2)
+	expected, actual := 37, hammingDistanceStr(input1, input2)
 	if expected != actual {
 		t.Logf("Actual hammind distance: %v", actual)
 		t.Errorf("TestHammingDistance failed")

@@ -125,7 +125,6 @@ func repeatedXor(input string, key string) string {
 
 // }
 
-
 func computeOnesInByte(b byte) int {
 	counter := 0
 	checkers := []byte{1, 2, 4, 8, 16, 32, 64, 128}
@@ -137,17 +136,28 @@ func computeOnesInByte(b byte) int {
 	return counter
 }
 
-func hammingDistance(str1 string, str2 string) int {
-	byteStr1, byteStr2 := []byte(str1), []byte(str2)
-	if len(byteStr1) != len(byteStr2) {
+func hammingDistanceBinary(b1 []byte, b2 []byte) int {
+	if len(b1) != len(b2) {
 		panic("Input strings should have same length")
 	}
 	distance := 0
-	for idx, _ := range byteStr1 {
-		xored := byteStr1[idx] ^ byteStr2[idx]
+	for idx, _ := range b1 {
+		xored := b1[idx] ^ b2[idx]
 		distance += computeOnesInByte(xored)
 	}
 	return distance
 }
+
+func hammingDistanceStr(str1 string, str2 string) int {
+	return hammingDistanceBinary([]byte(str1), []byte(str2))
+}
+
+// func findKeyLength(cypher string, minLength int, maxLength int) int {
+// 	// byteCypher := []byte(string)
+// 	for keyLength := minLength; keyLength <= maxLength; keyLength++ {
+// 		substr1, substr2 := cypher[0:keyLength], cypher[keyLength:2 * keyLength]
+// 		distance := hammingDistance(substr1, substr2)
+// 	}
+// }
 
 // End task 6
