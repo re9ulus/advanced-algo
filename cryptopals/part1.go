@@ -69,8 +69,7 @@ func compareToLanguage(str string, baseFrequencyTable map[rune]float64) float64 
 	return closeness
 }
 
-func findXorChar(input string, frequencyTable map[rune]float64) string {
-	byteInput, _ := hex.DecodeString(input)
+func findXorChar(byteInput []byte, frequencyTable map[rune]float64) string {
 	bestString := ""
 	minScore := 100500.0
 	for b := 0; b < 256; b++ {
@@ -91,7 +90,8 @@ func findEncodedString(inputStrings []string) string {
 	minScore := 100500.0
 	baseFrequencyTable := buildFrequencyTableFromFile("./data/text_1.txt")
 	for _, str := range inputStrings {
-		encodedString := findXorChar(str, baseFrequencyTable)
+		byteInput, _ := hex.DecodeString(str)
+		encodedString := findXorChar(byteInput, baseFrequencyTable)
 		score := compareToLanguage(encodedString, baseFrequencyTable)
 		if score < minScore {
 			minScore = score
@@ -116,15 +116,6 @@ func repeatedXor(input string, key string) string {
 // End task 5
 
 // Task 6
-
-// func breakXor(input string, keyLength int8) string {
-// 	return "not implemented"
-// }
-
-// func breakRepeatedXor(input string) string {
-
-// }
-
 func computeOnesInByte(b byte) int {
 	counter := 0
 	checkers := []byte{1, 2, 4, 8, 16, 32, 64, 128}
@@ -152,12 +143,49 @@ func hammingDistanceStr(str1 string, str2 string) int {
 	return hammingDistanceBinary([]byte(str1), []byte(str2))
 }
 
-// func findKeyLength(cypher string, minLength int, maxLength int) int {
-// 	// byteCypher := []byte(string)
-// 	for keyLength := minLength; keyLength <= maxLength; keyLength++ {
-// 		substr1, substr2 := cypher[0:keyLength], cypher[keyLength:2 * keyLength]
-// 		distance := hammingDistance(substr1, substr2)
+// TODO: Pass here binary array instead of string
+func findKeyLength(cypher string, minLength int, maxLength int) int {
+	// TODO: Use distance btw multiple blocks
+	minDistance := 100500.0
+	bestKeyLength := minLength
+	for keyLength := minLength; keyLength <= maxLength; keyLength++ {
+		binarySubstr1, err := b64.StdEncoding.DecodeString(cypher[0:keyLength])
+		checkError(err)
+		binarySubstr2, err := b64.StdEncoding.DecodeString(cypher[keyLength:2 * keyLength])
+		checkError(err)
+		distance := float64(hammingDistanceBinary(binarySubstr1, binarySubstr2)) / float64(len(binarySubstr1))
+		if distance < minDistance {
+			minDistance, bestKeyLength = distance, keyLength
+		}
+	}
+	return bestKeyLength
+}
+
+func breakTextByBlocks(cypher []byte, blockLength int) [][]byte {
+	blocks := make([][]byte, 0)
+	for idx := 0; idx < len(cypher); idx += blockLength {
+		blocks = append(blocks, cypher[idx:idx + blockLength])
+	}
+	return blocks
+}
+
+func transpose(blocks [][]byte) [][]byte {
+	transpBlocks := make([][]byte, len(blocks[0]))
+	for i := range transpBlocks {
+		transpBlocks[i] = make([]byte, len(blocks))
+	}
+	for i := range blocks {
+		for j := range blocks[0] {
+			transpBlocks[j][i] = blocks[i][j]
+		}
+	}
+	return transpBlocks
+}
+
+// func breakBlocks(blocks [][]byte) [][]byte {
+// 	// frequencyTable := 
+// 	for _, block := range blocks {
+// 		findXorChar(block, frequencyTable)
 // 	}
 // }
-
 // End task 6

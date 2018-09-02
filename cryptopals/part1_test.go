@@ -4,6 +4,7 @@ import (
 	"testing"
 	"bufio"
 	"os"
+	"encoding/hex"
 )
 
 func TestHexToBase64(t *testing.T) {
@@ -31,7 +32,8 @@ func TestSingleByteXor(t *testing.T) {
 	expected := "Cooking MC's like a pound of bacon"
 	// baseFrequencyTable := EnglishRuneFrequencyTable
 	baseFrequencyTable := buildFrequencyTableFromFile("./data/text_1.txt")
-	actual := findXorChar(input, baseFrequencyTable)
+	byteInput, _ := hex.DecodeString(input)
+	actual := findXorChar(byteInput, baseFrequencyTable)
 	if actual != expected {
 		t.Logf("Actual %v", actual)
 		t.Errorf("TestSingleByteXor failed")
