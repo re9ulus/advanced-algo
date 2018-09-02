@@ -30,10 +30,10 @@ func TestXorHex(t *testing.T) {
 func TestSingleByteXor(t *testing.T) {
 	input := "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
 	expected := "Cooking MC's like a pound of bacon"
-	// baseFrequencyTable := EnglishRuneFrequencyTable
 	baseFrequencyTable := buildFrequencyTableFromFile("./data/text_1.txt")
 	byteInput, _ := hex.DecodeString(input)
-	actual := findXorChar(byteInput, baseFrequencyTable)
+	xorByte := findXorByte(byteInput, baseFrequencyTable)
+	actual := string(xorWithByte(byteInput, xorByte))
 	if actual != expected {
 		t.Logf("Actual %v", actual)
 		t.Errorf("TestSingleByteXor failed")

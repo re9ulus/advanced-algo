@@ -69,18 +69,18 @@ func compareToLanguage(str string, baseFrequencyTable map[rune]float64) float64 
 	return closeness
 }
 
-func findXorChar(byteInput []byte, frequencyTable map[rune]float64) string {
-	bestString := ""
+func findXorByte(byteInput []byte, frequencyTable map[rune]float64) byte {
+	var bestByte byte = 0
 	minScore := 100500.0
 	for b := 0; b < 256; b++ {
 		candidate := string(xorWithByte(byteInput, byte(b)))
 		currentScore := compareToLanguage(candidate, frequencyTable)
 		if currentScore < minScore {
 			minScore = currentScore
-			bestString = candidate
+			bestByte = byte(b)
 		}
 	}
-	return bestString
+	return bestByte
 }
 // End task 3
 
@@ -91,7 +91,8 @@ func findEncodedString(inputStrings []string) string {
 	baseFrequencyTable := buildFrequencyTableFromFile("./data/text_1.txt")
 	for _, str := range inputStrings {
 		byteInput, _ := hex.DecodeString(str)
-		encodedString := findXorChar(byteInput, baseFrequencyTable)
+		xorByte := findXorByte(byteInput, baseFrequencyTable)
+		encodedString := string(xorWithByte(byteInput, xorByte))
 		score := compareToLanguage(encodedString, baseFrequencyTable)
 		if score < minScore {
 			minScore = score
@@ -182,10 +183,10 @@ func transpose(blocks [][]byte) [][]byte {
 	return transpBlocks
 }
 
-// func breakBlocks(blocks [][]byte) [][]byte {
+// func breakBlocks(blocks [][]byte, frequenc) [][]byte {
 // 	// frequencyTable := 
 // 	for _, block := range blocks {
-// 		findXorChar(block, frequencyTable)
+// 		findXorByte(block, frequencyTable)
 // 	}
 // }
 // End task 6
