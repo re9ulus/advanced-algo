@@ -1,11 +1,14 @@
 package cryptopals
 
 import (
+	"strings"
 	"testing"
 	"bufio"
 	"os"
 	"encoding/hex"
 )
+
+import b64 "encoding/base64"
 
 func TestHexToBase64(t *testing.T) {
 	input := "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"
@@ -78,4 +81,20 @@ func TestHammingDistance(t *testing.T) {
 		t.Logf("Actual hammind distance: %v", actual)
 		t.Errorf("TestHammingDistance failed")
 	}
+}
+
+func TestBreakRepeatedXor(t *testing.T) {
+	inputFile := "./data/task_6.input"
+	file, err := os.Open(inputFile)
+	checkError(err)
+	scanner := bufio.NewScanner(file)
+	inputData := make([]byte, 0)
+	for scanner.Scan() {
+		// inputData = append(inputData, )
+		binaryInput, err := b64.StdEncoding.DecodeString(strings.TrimSuffix(scanner.Text(), "\n"))
+		checkError(err)
+		inputData = append(inputData, binaryInput...)
+	}
+	result := breakRepeatedXor(inputData)
+	t.Logf("Result is : %v", result)
 }

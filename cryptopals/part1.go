@@ -1,9 +1,12 @@
 package cryptopals
 
 import b64 "encoding/base64"
-import "encoding/hex"
-import "math"
-import "strings"
+import (
+	"encoding/hex"
+	"math"
+	"strings"
+	"fmt"
+)
 
 
 // Task 1
@@ -145,24 +148,23 @@ func hammingDistanceStr(str1 string, str2 string) int {
 }
 
 // TODO: Pass here binary array instead of string
-func findKeyLength(cypher string, minLength int, maxLength int) int {
+func findKeyLength(cyphertext []byte, minLength int, maxLength int) int {
 	// TODO: Use distance btw multiple blocks
-	minDistance := 100500.0
+	minDistance := 5001000.0
 	bestKeyLength := minLength
 	for keyLength := minLength; keyLength <= maxLength; keyLength++ {
-		binarySubstr1, err := b64.StdEncoding.DecodeString(cypher[0:keyLength])
-		checkError(err)
-		binarySubstr2, err := b64.StdEncoding.DecodeString(cypher[keyLength:2 * keyLength])
-		checkError(err)
-		distance := float64(hammingDistanceBinary(binarySubstr1, binarySubstr2)) / float64(len(binarySubstr1))
+		substrLength := keyLength * 3
+		substr1, substr2 := cyphertext[0:substrLength], cyphertext[substrLength:2 * substrLength]
+		distance := float64(hammingDistanceBinary(substr1, substr2)) / float64(substrLength)
 		if distance < minDistance {
 			minDistance, bestKeyLength = distance, keyLength
 		}
 	}
+	fmt.Println("Min distance is ", minDistance)
 	return bestKeyLength
 }
 
-func breakTextByBlocks(cypher []byte, blockLength int) [][]byte {
+func splitTextByBlocks(cypher []byte, blockLength int) [][]byte {
 	blocks := make([][]byte, 0)
 	for idx := 0; idx < len(cypher); idx += blockLength {
 		blocks = append(blocks, cypher[idx:idx + blockLength])
@@ -183,10 +185,40 @@ func transpose(blocks [][]byte) [][]byte {
 	return transpBlocks
 }
 
-// func breakBlocks(blocks [][]byte, frequenc) [][]byte {
-// 	// frequencyTable := 
-// 	for _, block := range blocks {
-// 		findXorByte(block, frequencyTable)
-// 	}
-// }
+func breakBlocks(blocks [][]byte, frequencyTable map[rune]float64) [][]byte { 
+	decodedBlocks := make([][]byte, len(blocks))
+	for i, block := range blocks {
+		xorByte := findXorByte(block, frequencyTable)
+		decodedBlocks[i] = xorWithByte(block, xorByte)
+	}
+	return decodedBlocks
+}
+
+func mergeBlocks(blocks [][]byte) []byte {
+	// TODO: allocate memory
+	merged := make([]byte, 0)
+	for i := range blocks {
+		for j := range blocks[0] {
+			merged = append(merged, blocks[i][j])
+		}
+	}
+	return merged
+}
+
+func breakRepeatedXor(cyphertext []byte) string {
+	// 1. Get size of block
+	// b64.StdEncoding.DecodeString(cypher[0:keyLength])
+	blockSize := findKeyLength(cyphertext, 2, 40)
+	fmt.Printf("Expected block size is %v\n", blockSize)
+	// 2. Split by blocks and transpose
+	blocks := splitTextByBlocks(cyphertext, blockSize)
+	// 3. Break blocks
+	transposedBlocks := transpose(blocks)
+	frequencyTable := buildFrequencyTableFromFile("./data/text_1.txt")
+	decodedBlocks := breakBlocks(transposedBlocks, frequencyTable)
+	// 4. Transpose back
+	blocks = transpose(decodedBlocks)
+	// 5. Return string
+	return string(mergeBlocks(blocks))
+} 
 // End task 6
