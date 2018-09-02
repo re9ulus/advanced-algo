@@ -114,3 +114,40 @@ func repeatedXor(input string, key string) string {
 	return hex.EncodeToString(buffer)
 }
 // End task 5
+
+// Task 6
+
+// func breakXor(input string, keyLength int8) string {
+// 	return "not implemented"
+// }
+
+// func breakRepeatedXor(input string) string {
+
+// }
+
+
+func computeOnesInByte(b byte) int {
+	counter := 0
+	checkers := []byte{1, 2, 4, 8, 16, 32, 64, 128}
+	for _, chk := range checkers {
+		if b & chk != 0 {
+			counter++
+		}
+	}
+	return counter
+}
+
+func hammingDistance(str1 string, str2 string) int {
+	byteStr1, byteStr2 := []byte(str1), []byte(str2)
+	if len(byteStr1) != len(byteStr2) {
+		panic("Input strings should have same length")
+	}
+	distance := 0
+	for idx, _ := range byteStr1 {
+		xored := byteStr1[idx] ^ byteStr2[idx]
+		distance += computeOnesInByte(xored)
+	}
+	return distance
+}
+
+// End task 6
