@@ -10,15 +10,16 @@ import (
 	"time"
 )
 
-type Graph map[int]map[int]struct{}
+type (
+	Graph  map[int]map[int]struct{}
+	Matrix []int
+)
 
-type Matrix []int
-
-var Empty struct{}
-
-var wg sync.WaitGroup
-
-var nWorkers = 4
+var (
+	Empty    struct{}
+	wg       sync.WaitGroup
+	nWorkers = 4
+)
 
 func ReadGraph(filename string) (Graph, int) {
 	file, err := os.Open(filename)
