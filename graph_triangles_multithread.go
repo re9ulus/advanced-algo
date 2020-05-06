@@ -61,9 +61,6 @@ func ReadGraph(filename string) (Graph, int) {
 		if _, ok := nodes[from]; !ok {
 			nodes[from] = make(map[int]struct{})
 		}
-		if _, ok := nodes[to]; !ok {
-			nodes[to] = make(map[int]struct{})
-		}
 		nodes[from][to] = Empty
 	}
 	return nodes, maxIdx
